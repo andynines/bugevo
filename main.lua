@@ -25,6 +25,7 @@ SOFTWARE.
 ]]--
 
 local simulation = require("bugevo")
+
 local FIELD_X = simulation.FIELD_X
 local FIELD_Y = simulation.FIELD_Y
 local CODES = simulation.CODES
@@ -37,21 +38,21 @@ end
 
 local WINDOW_TITLE = "Bugevo"
 local WORD_WRAP = 500
-local TEXT_COLOR = rgb(255, 0, 0)
-local BACKGROUND_COLOR = rgb(0, 0, 0)
-local BUG_COLOR = rgb(0, 0, 255)
-local BACTERIA_COLOR = rgb(0, 255, 0)
+local TEXT_COLOR = rgb(255, 255, 153)
+local BACKGROUND_COLOR = rgb(76, 0, 153)
+local BUG_COLOR = rgb(255, 126, 51)
+local BACTERIA_COLOR = rgb(153, 255, 0)
 
---[[Keyboard control]]--
+--Keyboard control
 local RUN_PROMPT = "Press [SPACE] to begin a new simulation"
 local RUN_CONTROL = " "
 local QUIT_CONTROL = "q"
 
---[[Stretch simulation space to fit display window]]--
+--Stretch simulation space to fit display window
 local X_RATIO = love.graphics.getWidth() / FIELD_X
 local Y_RATIO = love.graphics.getHeight() / FIELD_Y
 
---[[Initialize display window]]--
+--Initialize display window
 love.graphics.setCaption(WINDOW_TITLE)
 love.graphics.setBackgroundColor(BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b)
 
@@ -62,7 +63,7 @@ local STATES = {INITIAL=1,
                 ACTIVE=2}
 
 local function initial()
-    --[[Wait for user input and initialize a new simulation]]--
+    --Wait for user input and initialize a new simulation
     iteration = 0
     love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
     love.graphics.printf(RUN_PROMPT, 0, 0, WORD_WRAP)
@@ -73,7 +74,7 @@ local function initial()
 end
 
 local function active()
-    --[[Iterate over the current simulation]]--
+    --Iterate over the current simulation
     local field = iterate()
     if not field then
         state = STATES.INITIAL
@@ -91,7 +92,7 @@ local function active()
             end
         end
         love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
-        love.graphics.printf("Iteration " .. iteration, 0, 0, WORD_WRAP)
+        love.graphics.printf("Iter. " .. iteration, 0, 0, WORD_WRAP)
         iteration = iteration + 1
     end
 end
@@ -101,7 +102,7 @@ local STATE_FUNCTIONS = {initial, active}
 state = STATES.INITIAL
 
 function love.draw()
-    --[[Check for quit command, else do according to the state of the program]]--
+    --Check for quit command, else do according to the state of the program
     if love.keyboard.isDown(QUIT_CONTROL) then
         love.event.quit()
     end
