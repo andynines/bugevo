@@ -7,9 +7,9 @@ It is based off of the idea proposed in A.K. Dewdney's "Simulated evolution"
 article appearing in the "Computer recreations" column of the May 1989 issue of
 Scientific American Magazine. One can observe the bugs evolve to move across the
 virtual petri dish in a way that nets them the most bacteria, while natural
-selection removes bugs within inefficient movement patterns through starvation.
-In this implementation, one can expect the bugs to evolve from "jittery"
-movement patterns to long, gliding patterns.
+selection removes bugs with inefficient movement patterns through starvation. In
+this implementation, one can expect the bugs to evolve from "jittery" movement
+patterns to long, gliding patterns.
 
 License
 ---
