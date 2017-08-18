@@ -56,10 +56,10 @@ local MOVE_DELTAS = {xy(0, 1), --Coordinate pair addends for every direction of 
                      xy(0, -1),
                      xy(1, 0),
                      xy(-1, 0),
-		                 xy(1, 1),
-		                 xy(1, -1),
-		                 xy(-1, 1),
-		                 xy(-1, -1)}
+		     xy(1, 1),
+		     xy(1, -1),
+		     xy(-1, 1),
+		     xy(-1, -1)}
 
 math.randomseed(os.time())
 
@@ -95,7 +95,7 @@ local function get_adjacents(position)
         local current_delta = MOVE_DELTAS[delta]
         local check_position = xy(position.x + current_delta.x, position.y + current_delta.y)
         if within_borders(check_position) and field[check_position.x][check_position.y] == CODES.EMPTY then
-	          table.insert(adjacents, current_delta)
+	    table.insert(adjacents, current_delta)
         end
     end
     return adjacents
@@ -150,10 +150,10 @@ function Bug:new(heredity, spawn_point)
     if heredity then
         self.genes = mutate(heredity)
     else
-	      self.genes = {}
-	      for direction = 1, #MOVE_DELTAS do
-	          table.insert(self.genes, math.random(0, DIRECTION_MAX_PROBABILITY))
-	      end
+	self.genes = {}
+        for direction = 1, #MOVE_DELTAS do
+            table.insert(self.genes, math.random(0, DIRECTION_MAX_PROBABILITY))
+	end
     end
     return self
 end
