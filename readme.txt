@@ -31,3 +31,4 @@ LOVE2d programs like BugEvo can be run in one of two ways:
 -From a current directory containing the repository folder, pass the command
 'love bugevo' changing the name of the folder as necessary.
 -Using BugEvo's .love file (will be added in a future commit)
+Press the spacebar to begin a new simulation. Press Q at any time to quit.
