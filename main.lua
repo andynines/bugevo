@@ -39,9 +39,9 @@ end
 local WINDOW_TITLE = "Bugevo"
 local WORD_WRAP = 500
 local TEXT_COLOR = rgb(255, 255, 153)
-local BACKGROUND_COLOR = rgb(76, 0, 153)
-local BUG_COLOR = rgb(255, 126, 51)
-local BACTERIA_COLOR = rgb(153, 255, 0)
+local BACKGROUND_COLOR = rgb(0, 0, 0)
+local BUG_COLOR = rgb(153, 255, 0)
+local BACTERIA_COLOR = rgb(76, 0, 153)
 
 --Keyboard control
 local RUN_PROMPT = "Press [SPACE] to begin a new simulation"
@@ -79,10 +79,12 @@ local function active()
     if not field then
         state = STATES.INITIAL
     else
+	local population = 0
         for x = 1, #field do
             for y = 1, #field[x] do
                 if field[x][y] ~= CODES.EMPTY then
                     if field[x][y] == CODES.BUG then
+			population = population + 1
                         love.graphics.setColor(BUG_COLOR.r, BUG_COLOR.g, BUG_COLOR.b)
                     elseif field[x][y] == CODES.BACTERIA then
                         love.graphics.setColor(BACTERIA_COLOR.r, BACTERIA_COLOR.g, BACTERIA_COLOR.b)
@@ -92,7 +94,7 @@ local function active()
             end
         end
         love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
-        love.graphics.printf("Iter. " .. iteration, 0, 0, WORD_WRAP)
+        love.graphics.printf("iter " .. iteration .. "\npop " .. population, 0, 0, WORD_WRAP)
         iteration = iteration + 1
     end
 end
