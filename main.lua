@@ -56,7 +56,6 @@ local Y_RATIO = love.graphics.getHeight() / FIELD_Y
 love.graphics.setCaption(WINDOW_TITLE)
 love.graphics.setBackgroundColor(BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b)
 
-local iteration
 local state
 
 local STATES = {INITIAL=1,
@@ -64,7 +63,6 @@ local STATES = {INITIAL=1,
 
 local function initial()
     --Wait for user input and initialize a new simulation
-    iteration = 0
     love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
     love.graphics.printf(RUN_PROMPT, 0, 0, WORD_WRAP)
     if love.keyboard.isDown(RUN_CONTROL) then
@@ -75,16 +73,17 @@ end
 
 local function active()
     --Iterate over the current simulation
-    local field = iterate()
-    if not field then
+    local data = iterate()
+    if not data then
         state = STATES.INITIAL
     else
-	local population = 0
+        local field = data.field
+        local iteration = data.iteration
+	local population = data.population
         for x = 1, #field do
             for y = 1, #field[x] do
                 if field[x][y] ~= CODES.EMPTY then
                     if field[x][y] == CODES.BUG then
-			population = population + 1
                         love.graphics.setColor(BUG_COLOR.r, BUG_COLOR.g, BUG_COLOR.b)
                     elseif field[x][y] == CODES.BACTERIA then
                         love.graphics.setColor(BACTERIA_COLOR.r, BACTERIA_COLOR.g, BACTERIA_COLOR.b)
@@ -95,7 +94,6 @@ local function active()
         end
         love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
         love.graphics.printf("iter " .. iteration .. "\npop " .. population, 0, 0, WORD_WRAP)
-        iteration = iteration + 1
     end
 end
 
