@@ -17,18 +17,30 @@ The contents of this repository are made available under the MIT License.
 
 Requirements
 ---
-The program was developed using Lua 5.3.4 with LOVE2D 0.8.0.
+The project was developed using Lua 5.3.4 and LOVE2D 0.8.0.
 
-Development
+Contents
 ---
-BugEvo is still undergoing changes to maximize the speed of the simulation. In
-addition, the optimal simulation constants to yield clear results of "evolution"
-having taken place have yet to be found.
+-.gitattributes
+-bugevo.lua
+-license.txt
+-main.lua
+-readme.txt
+-test.lua
 
 Use
 ---
-LOVE2d programs like BugEvo can be run in one of two ways:
--From a current directory containing the repository folder, pass the command
-'love bugevo' changing the name of the folder as necessary.
--Using BugEvo's .love file (will be added in a future commit)
-Press the spacebar to begin a new simulation. Press Q at any time to quit.
+To run the simulation with its LOVE2D graphical presentation, move to the
+directory containing the repository folder and run the command:
+
+love bugevo
+
+Change "bugevo" to the name of the repository folder if it differs. Also
+provided is a test script which runs more quickly than the normal simulation,
+but only produces text output in the terminal. To use the script, move into the
+directory of the repository folder and run the command:
+
+lua test.lua
+
+A constant inside the script determines for how long the simulation will run,
+set at 30,000 iterations by default.
