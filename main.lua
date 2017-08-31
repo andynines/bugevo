@@ -37,29 +37,30 @@ local function rgb(r, g, b)
 end
 
 local WINDOW_TITLE = "Bugevo"
+local RUN_PROMPT = "Press [SPACE] to begin a new simulation"
 local WORD_WRAP = 500
+
 local TEXT_COLOR = rgb(255, 255, 153)
 local BACKGROUND_COLOR = rgb(0, 0, 0)
 local BUG_COLOR = rgb(153, 255, 0)
 local BACTERIA_COLOR = rgb(76, 0, 153)
 
 --Keyboard control
-local RUN_PROMPT = "Press [SPACE] to begin a new simulation"
 local RUN_CONTROL = " "
 local QUIT_CONTROL = "q"
 
+local STATES = {INITIAL=1,
+                ACTIVE=2}
+
 --Stretch simulation space to fit display window
-local X_RATIO = love.graphics.getWidth() / FIELD_X
-local Y_RATIO = love.graphics.getHeight() / FIELD_Y
+local X_STRETCH = love.graphics.getWidth() / FIELD_X
+local Y_STRETCH = love.graphics.getHeight() / FIELD_Y
 
 --Initialize display window
 love.graphics.setCaption(WINDOW_TITLE)
 love.graphics.setBackgroundColor(BACKGROUND_COLOR.r, BACKGROUND_COLOR.g, BACKGROUND_COLOR.b)
 
 local state
-
-local STATES = {INITIAL=1,
-                ACTIVE=2}
 
 local function initial()
     --Wait for user input and initialize a new simulation
@@ -75,6 +76,7 @@ local function active()
     --Iterate over the current simulation
     local data = iterate()
     if not data then
+        --Simulation returns nil when ended; return to start screen
         state = STATES.INITIAL
     else
         local field = data.field
@@ -88,12 +90,15 @@ local function active()
                     elseif field[x][y] == CODES.BACTERIA then
                         love.graphics.setColor(BACTERIA_COLOR.r, BACTERIA_COLOR.g, BACTERIA_COLOR.b)
                     end
-                    love.graphics.rectangle("fill", X_RATIO * x - X_RATIO, (FIELD_Y - y) * Y_RATIO, X_RATIO, Y_RATIO)
+                    --[[Adjustments are made here to transition between "simulation" and "LOVE2D" space.
+                        1. LOVE2D coordinates between counting from 0; the simulation counts from 1
+                        2. LOVE2D draws in the foruth quadrant of the cartesian plane; the simulation uses the first]]--
+                    love.graphics.rectangle("fill", X_STRETCH * x - X_STRETCH, (FIELD_Y - y) * Y_STRETCH, X_STRETCH, Y_STRETCH)
                 end
             end
         end
         love.graphics.setColor(TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b)
-        love.graphics.printf("iter " .. iteration .. "\npop " .. population, 0, 0, WORD_WRAP)
+        love.graphics.printf("iter ".. iteration.. "\npop ".. population, 0, 0, WORD_WRAP)
     end
 end
 
