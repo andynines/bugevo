@@ -91,7 +91,7 @@ local function active()
                         love.graphics.setColor(BACTERIA_COLOR.r, BACTERIA_COLOR.g, BACTERIA_COLOR.b)
                     end
                     --[[Adjustments are made here to transition between "simulation" and "LOVE2D" space.
-                        1. LOVE2D coordinates between counting from 0; the simulation counts from 1
+                        1. LOVE2D coordinates begin counting from 0; the simulation counts from 1
                         2. LOVE2D draws in the foruth quadrant of the cartesian plane; the simulation uses the first]]--
                     love.graphics.rectangle("fill", X_STRETCH * x - X_STRETCH, (FIELD_Y - y) * Y_STRETCH, X_STRETCH, Y_STRETCH)
                 end
