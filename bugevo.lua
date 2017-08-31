@@ -24,23 +24,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]--
 
-local FIELD_X = 100
-local FIELD_Y = 100
+local FIELD_X = 120
+local FIELD_Y = 120
 local CODES = {EMPTY=1, --Number codes indicating a certain object on a field space
                BUG=2,
                BACTERIA=3}
 
-local INITIAL_BACTERIA = 200 --Bacteria already on the field at iteration 0
-local BACTERIA_REPLENISH_WAIT = 3 --How many iterations between a new bacteria spawn
+local INITIAL_BACTERIA = 150 --Bacteria already on the field at iteration 0
+local BACTERIA_REPLENISH_WAIT = 4 --How many iterations between a new bacteria spawn
 local BACTERIA_REPLENISH_QUANTITY = 1 --How many bacteria spawn upon replenishment
 
 local INITIAL_BUGS = 20 --Bugs already on the field at iteration 0
 local MAX_AGE = 1000 --Maximum iterations a bug can undergo before it dies
 
-local INITIAL_ENERGY = 200 --Amount of energy that every bug is initialized with
+local INITIAL_ENERGY = 300 --Amount of energy that every bug is initialized with
 local MAX_ENERGY = 1500 --Maximum amount of energy a bug can hold
 local MOVE_ENERGY_CONSUMPTION = 1 --How much energy it takes a bug to undergo one iteration
-local EAT_ENERGY_GAIN = 100 --How much energy a bug gains from consuming one bacteria
+local EAT_ENERGY_GAIN = 150 --How much energy a bug gains from consuming one bacteria
 
 local REPRODUCTIVE_MIN_AGE = 800 --Minimum iterations a bug must have undergone before reproducing
 local REPRODUCTIVE_MIN_ENERGY = 1000 --Minimum energy level a bug must hold to reproduce
@@ -84,7 +84,7 @@ local function within_borders(position)
     return xy(position.x > 0 and position.x <= FIELD_X, position.y > 0 and position.y <= FIELD_Y)
 end
 
-local function get_position()
+local function find_empty()
     --Find and return an empty space on the field
     local field = field
     local attempts = 0
@@ -100,7 +100,7 @@ local function get_position()
     return nil
 end
 
-local function get_adjacents(position)
+local function adjacents_of(position)
     --Return a table of deltas to move to available adjacent locations of a position
     local adjacents = {}
     for delta = 1, #MOVE_DELTAS do
@@ -117,7 +117,7 @@ end
 local function spawn_bacteria(quantity)
     --Spawns some amount of bacteria in empty spaces on the field
     for bacteria = 1, quantity do
-        local new_position = get_position()
+        local new_position = find_empty()
         if new_position then
             field[new_position.x][new_position.y] = CODES.BACTERIA
         else
@@ -157,7 +157,7 @@ function Bug:new(parent_generation, spawn_point, heredity)
     if spawn_point then
         self.position = spawn_point
     else
-        local new_position = get_position()
+        local new_position = find_empty()
         if new_position then
             self.position = new_position
         else
@@ -192,12 +192,10 @@ end
 
 function Bug:wander()
     --Bug chooses a random direction of travel according to its genes
-    local directions = 0
     local probabilities = {}
     for direction, probability in pairs(self.genes) do
-        directions = directions + 1
         for chance = 1, probability do
-            insert(probabilities, directions)
+            insert(probabilities, direction)
         end
     end
     --Bug finds nowhere to move
@@ -240,14 +238,14 @@ end
 
 function Bug:reproduce()
     --Spawn slightly mutated children adjacent to a bug
-    local adjacents = get_adjacents(self.position)
+    local adjacents = adjacents_of(self.position)
     if #adjacents >= OFFSPRING then
         local offspring = 0
             repeat
                 spawn_delta = remove(adjacents, random(1, #adjacents))
                 insert(bugs, Bug:new(self.generation,
-                                     xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y,
-                                     self.genes)))
+                                     xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
+                                     self.genes))
                 offspring = offspring + 1
             until offspring == OFFSPRING
         return true
