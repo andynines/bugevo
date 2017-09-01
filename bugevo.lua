@@ -185,7 +185,7 @@ function Bug:info()
           "\nlocation (".. self.position.x.. ", ".. self.position.y.. ")")
     for probability_index, probability in pairs(self.genes) do
         local current_delta = MOVE_DELTAS[probability_index]
-        print("gene ".. "(".. current_delta.x.. ", ".. current_delta.y.. ") ".. probability.. "/".. DIRECTION_MAX_PROBABILITY)
+        print("gene (".. current_delta.x.. ", ".. current_delta.y.. ") ".. probability.. "/".. DIRECTION_MAX_PROBABILITY)
     end
     print("end info\n")
 end
@@ -241,13 +241,13 @@ function Bug:reproduce()
     local adjacents = adjacents_of(self.position)
     if #adjacents >= OFFSPRING then
         local offspring = 0
-            repeat
-                spawn_delta = remove(adjacents, random(1, #adjacents))
-                insert(bugs, Bug:new(self.generation,
-                                     xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
-                                     self.genes))
-                offspring = offspring + 1
-            until offspring == OFFSPRING
+        repeat
+            spawn_delta = remove(adjacents, random(1, #adjacents))
+            insert(bugs, Bug:new(self.generation,
+                                 xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
+                                 self.genes))
+            offspring = offspring + 1
+        until offspring == OFFSPRING
         return true
     else
         return nil
