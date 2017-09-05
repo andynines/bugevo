@@ -240,9 +240,9 @@ function Bug:reproduce()
         local offspring = 0
         repeat
             spawn_delta = remove(adjacents, random(1, #adjacents))
-            insert(bugs, Bug:new(self.generation,
+            insert(bugs, Bug:new(self.generation + 1,
                                  xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
-                                 self.genes))
+                                 mutate(self.genes)))
             offspring = offspring + 1
         until offspring == OFFSPRING
         return true
