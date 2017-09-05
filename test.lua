@@ -31,11 +31,14 @@ local iterate = simulation.iterate
 
 local MAX_ITERATIONS = 30000 --End the program after this many iterations
 
+local exit = os.exit
+
 initialize()
 print("Simulation will cease after ".. MAX_ITERATIONS.. " iterations\n")
 for to_max = 1, MAX_ITERATIONS do
     if not iterate() then
-        break
+        print("The bugs went extinct")
+        exit()
     end
 end
-print("Simulation complete") 
+print("Maximum iterations reached")
