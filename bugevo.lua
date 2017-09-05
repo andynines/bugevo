@@ -24,17 +24,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]--
 
-local FIELD_X = 120
-local FIELD_Y = 120
+local FIELD_X = 250
+local FIELD_Y = 250
 local CODES = {EMPTY=1, --Number codes indicating a certain object on a field space
                BUG=2,
                BACTERIA=3}
 
-local INITIAL_BACTERIA = 150 --Bacteria already on the field at iteration 0
-local BACTERIA_REPLENISH_WAIT = 4 --How many iterations between a new bacteria spawn
+local INITIAL_BACTERIA = 500 --Bacteria already on the field at iteration 0
+local BACTERIA_REPLENISH_WAIT = 1 --How many iterations between a new bacteria spawn
 local BACTERIA_REPLENISH_QUANTITY = 1 --How many bacteria spawn upon replenishment
 
-local INITIAL_BUGS = 20 --Bugs already on the field at iteration 0
+local INITIAL_BUGS = 100 --Bugs already on the field at iteration 0
 local MAX_AGE = 1000 --Maximum iterations a bug can undergo before it dies
 
 local INITIAL_ENERGY = 300 --Amount of energy that every bug is initialized with
@@ -46,7 +46,7 @@ local REPRODUCTIVE_MIN_AGE = 800 --Minimum iterations a bug must have undergone 
 local REPRODUCTIVE_MIN_ENERGY = 1000 --Minimum energy level a bug must hold to reproduce
 local OFFSPRING = 2 --How many offspring are created when a bug reproduces
 local MUTATION_RATE = 1 --Change rate of movement probabilities of a bug's offspring
-local DIRECTION_MAX_PROBABILITY = 100 --Largest probability a bug may have to move in a certain direction
+local DIRECTION_MAX_PROBABILITY = 1 --Largest probability a bug may have to move in a certain direction
 
 local function xy(x, y)
     --Create coordinate pair objects
@@ -78,6 +78,7 @@ local field
 local bugs
 local replenish_timer
 local iteration
+local sample
 
 local function within_borders(position)
     --Verifies whether a position is within the field
@@ -144,18 +145,13 @@ end
 local Bug = {}
 Bug.__index = Bug
 
-function Bug:new(parent_generation, spawn_point, heredity)
+function Bug:new(generation, position, genes)
     local self = {}
-    setmetatable(self, Bug)
-    if parent_generation then
-        self.generation = parent_generation + 1
-    else
-        self.generation = 1
-    end
+    self.generation = generation or 1
     self.age = 0
     self.energy = INITIAL_ENERGY
-    if spawn_point then
-        self.position = spawn_point
+    if position then
+        self.position = position
     else
         local new_position = find_empty()
         if new_position then
@@ -165,20 +161,21 @@ function Bug:new(parent_generation, spawn_point, heredity)
         end
     end
     field[self.position.x][self.position.y] = CODES.BUG
-    if heredity then
-        self.genes = mutate(heredity)
+    if genes then
+        self.genes = genes
     else
         self.genes = {}
         for direction = 1, #MOVE_DELTAS do
             insert(self.genes, random(0, DIRECTION_MAX_PROBABILITY))
         end
     end
-    return self
+    return setmetatable(self, Bug)
 end
 
 function Bug:info()
     --Print the bug's attributes
-    print("bug info"..
+    sample = sample + 1
+    print("bug sample #".. sample..
           "\ngeneration ".. self.generation..
           "\nage ".. self.age..
           "\nenergy ".. self.energy..
@@ -277,6 +274,7 @@ local function initialize()
     spawn_bacteria(INITIAL_BACTERIA)
     replenish_timer = 0
     iteration = 0
+    sample = 0
 end
 
 local function iterate()
