@@ -30,23 +30,24 @@ local CODES = {EMPTY=1, --Number codes indicating a certain object on a field sp
                BUG=2,
                BACTERIA=3}
 
-local INITIAL_BACTERIA = 500 --Bacteria already on the field at iteration 0
-local BACTERIA_REPLENISH_WAIT = 1 --How many iterations between a new bacteria spawn
+local INITIAL_BACTERIA = 200 --Bacteria already on the field at iteration 0
+local MAX_BACTERIA = 500 --How many bacteria may exist on the field at one time
+local BACTERIA_REPLENISH_WAIT = 2 --How many iterations between a new bacteria spawn
 local BACTERIA_REPLENISH_QUANTITY = 1 --How many bacteria spawn upon replenishment
 
 local INITIAL_BUGS = 100 --Bugs already on the field at iteration 0
 local MAX_AGE = 1000 --Maximum iterations a bug can undergo before it dies
 
-local INITIAL_ENERGY = 300 --Amount of energy that every bug is initialized with
+local INITIAL_ENERGY = 400 --Amount of energy that every bug is initialized with
 local MAX_ENERGY = 1500 --Maximum amount of energy a bug can hold
 local MOVE_ENERGY_CONSUMPTION = 1 --How much energy it takes a bug to undergo one iteration
-local EAT_ENERGY_GAIN = 150 --How much energy a bug gains from consuming one bacteria
+local EAT_ENERGY_GAIN = 300 --How much energy a bug gains from consuming one bacteria
 
 local REPRODUCTIVE_MIN_AGE = 800 --Minimum iterations a bug must have undergone before reproducing
 local REPRODUCTIVE_MIN_ENERGY = 1000 --Minimum energy level a bug must hold to reproduce
 local OFFSPRING = 2 --How many offspring are created when a bug reproduces
 local MUTATION_RATE = 1 --Change rate of movement probabilities of a bug's offspring
-local DIRECTION_MAX_PROBABILITY = 1 --Largest probability a bug may have to move in a certain direction
+local DIRECTION_MAX_PROBABILITY = 50 --Largest probability a bug may have to move in a certain direction
 
 local function xy(x, y)
     --Create coordinate pair objects
@@ -66,16 +67,16 @@ local MOVE_DELTAS = {xy(0, MOVEMENT_DISTANCE), --Coordinate pair addends for eve
 
 local SAMPLE_INTERVAL = 200 --Print information about a random bug at this interval
 
-local setmetatable = setmetatable
 local insert = table.insert
 local remove = table.remove
 local random = math.random
-local randomseed = math.randomseed
+local print = print
 
-randomseed(os.time())
+math.randomseed(os.time())
 
 local field
 local bugs
+local bacteria_count
 local replenish_timer
 local iteration
 local sample
@@ -118,9 +119,13 @@ end
 local function spawn_bacteria(quantity)
     --Spawns some amount of bacteria in empty spaces on the field
     for bacteria = 1, quantity do
+        if not (bacteria_count < MAX_BACTERIA) then
+            break
+        end
         local new_position = find_empty()
         if new_position then
             field[new_position.x][new_position.y] = CODES.BACTERIA
+            bacteria_count = bacteria_count + 1
         else
             return nil
         end
@@ -228,6 +233,7 @@ function Bug:wander()
         if self.energy > MAX_ENERGY then
             self.energy = MAX_ENERGY
         end
+        bacteria_count = bacteria_count - 1
     end
     field[self.position.x][self.position.y] = CODES.BUG
     return true
@@ -260,7 +266,7 @@ local function initialize()
             field[x][y] = CODES.EMPTY
         end
     end
-    --Initialize bug database: changes size to contain all currently alive bugs
+    --Initialize bug database: contains all currently alive bugs
     bugs = {}
     for bug_count = 1, INITIAL_BUGS do
         local new_bug = Bug:new()
@@ -271,7 +277,9 @@ local function initialize()
         end
     end
     --Create initial supply of bacteria
+    bacteria_count = 0
     spawn_bacteria(INITIAL_BACTERIA)
+    --Initialize time-based variables
     replenish_timer = 0
     iteration = 0
     sample = 0
@@ -299,10 +307,10 @@ local function iterate()
     end
     --Remove all dead bugs
     for removals = 1, #dead_indexes do
-        local dead_bug = dead_indexes[1]
-        local corpse = bugs[dead_bug]
-        field[corpse.position.x][corpse.position.y] = CODES.EMPTY
-        remove(bugs, dead_bug)
+        local current_index = dead_indexes[1]
+        local dead_bug = bugs[current_index]
+        field[dead_bug.position.x][dead_bug.position.y] = CODES.EMPTY
+        remove(bugs, current_index)
     end
     --End simulation if population dies
     if #bugs == 0 then
