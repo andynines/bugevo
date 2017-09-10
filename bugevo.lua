@@ -258,8 +258,8 @@ function Bug:reproduce()
         repeat
             spawn_delta = table.remove(adjacents, math.random(1, #adjacents))
             table.insert(bugs, Bug:new(self.generation + 1,
-                                 xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
-                                 mutate(self.genes)))
+                                       xy(self.position.x + spawn_delta.x, self.position.y + spawn_delta.y),
+                                       mutate(self.genes)))
             offspring = offspring + 1
         until offspring == OFFSPRING
         return true
