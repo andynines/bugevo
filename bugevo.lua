@@ -111,8 +111,8 @@ end
 local function adjacents_of(position)
     --Return a table of deltas to move to available adjacent locations of a position
     local adjacents = {}
-    for delta = 1, #MOVE_DELTAS do
-        local current_delta = MOVE_DELTAS[delta]
+    for delta_index = 1, #MOVE_DELTAS do
+        local current_delta = MOVE_DELTAS[delta_index]
         local check_position = xy(position.x + current_delta.x, position.y + current_delta.y)
         local border_check = within_borders(check_position)
         if (border_check.x and border_check.y) and field[check_position.x][check_position.y] == CODES.EMPTY then
@@ -297,7 +297,7 @@ local function initialize()
 end
 
 local function iterate()
-    --Iterate through the bugs list and move every bug, then table.remove dead ones
+    --Iterate through the bugs list and move every bug, then remove dead ones
     local dead_indexes = {}
     for bug_index = 1, #bugs do
         bugs[bug_index]:wander()
@@ -316,7 +316,7 @@ local function iterate()
             end
         end
     end
-    --table.remove all dead bugs
+    --Remove all dead bugs
     for _ = 1, #dead_indexes do
         local current_index = dead_indexes[1]
         local dead_bug = bugs[current_index]
