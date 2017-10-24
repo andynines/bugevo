@@ -2,7 +2,7 @@
 bugevo.lua
 Copyright (c) 2017 andynines
 MIT License
-]]--
+]]
 
 local FIELD_X = 100
 local FIELD_Y = 100
@@ -28,7 +28,7 @@ local REPRODUCTIVE_MIN_ENERGY = 600 --Minimum energy level a bug must hold to re
 local OFFSPRING = 2 --How many offspring are created when a bug reproduces
 local GENES_MUTATED = 1 --How many directions of movement are affected by mutation
 local MUTATION_MAGNITUDE = 1 --Amount by which a direction probability is changed
-local DIRECTION_MAX_PROBABILITY = 4 --Largest probability a bug may have to move in a certain direction
+local DIRECTION_MAX_PROBABILITY = 50 --Largest probability a bug may have to move in a certain direction
 
 local function xy(x, y)
     --Create coordinate pair objects
@@ -46,8 +46,6 @@ local MOVE_DELTAS = {xy(0, MOVEMENT_DISTANCE), --Coordinate pair addends for eve
                      xy(-MOVEMENT_DISTANCE, MOVEMENT_DISTANCE),
                      xy(-MOVEMENT_DISTANCE, -MOVEMENT_DISTANCE)}
 
-local SAMPLE_INTERVAL = 200 --Print information about a random bug at this interval
-
 math.randomseed(os.time())
 
 local field
@@ -55,12 +53,11 @@ local bugs
 local bacteria_count
 local replenish_timer
 local iteration
-local sample
 
-local function does_contain(table, item)
+local function does_contain(list, desired_item)
     --Verifies if a value exists inside a table
-    for index, value in ipairs(table) do
-        if value == item then
+    for _, current_item in ipairs(list) do
+        if current_item == desired_item then
             return true
         end
     end
@@ -169,18 +166,16 @@ function Bug:new(generation, position, genes)
 end
 
 function Bug:info()
-    --Print the bug's attributes
-    sample = sample + 1
-    print("bug sample #".. sample..
-          "\ngeneration ".. self.generation..
-          "\nage ".. self.age..
-          "\nenergy ".. self.energy..
-          "\nlocation (".. self.position.x.. ", ".. self.position.y.. ")")
+    --Return a string of the bug's attributes
+    local info = "generation ".. self.generation.. "\n"..
+				 "age ".. self.age.. "\n"..
+				 "energy ".. self.energy.. "\n"..
+				 "location (".. self.position.x.. ", ".. self.position.y.. ")\n"
     for probability_index, probability in pairs(self.genes) do
         local current_delta = MOVE_DELTAS[probability_index]
-        print("gene (".. current_delta.x.. ", ".. current_delta.y.. ") ".. probability.. "/".. DIRECTION_MAX_PROBABILITY)
+        info = info.. "gene (".. current_delta.x.. ", ".. current_delta.y.. ") ".. probability.. "/".. DIRECTION_MAX_PROBABILITY.. "\n"
     end
-    print("end info\n")
+    return info
 end
 
 function Bug:wander()
@@ -227,6 +222,9 @@ function Bug:wander()
         bacteria_count = bacteria_count - 1
     end
     field[self.position.x][self.position.y] = CODES.BUG
+    --The bug ages
+    self.age = self.age + 1
+    self.energy = self.energy - MOVE_ENERGY_CONSUMPTION
     return true
 end
 
@@ -273,7 +271,6 @@ local function initialize()
     --Initialize time-based variables
     replenish_timer = 0
     iteration = 0
-    sample = 0
 end
 
 local function iterate()
@@ -281,9 +278,6 @@ local function iterate()
     local dead_indexes = {}
     for bug_index = 1, #bugs do
         bugs[bug_index]:wander()
-        --Bug matures
-        bugs[bug_index].age = bugs[bug_index].age + 1
-        bugs[bug_index].energy = bugs[bug_index].energy - MOVE_ENERGY_CONSUMPTION
         --Kill old and starving bugs
         local bug = bugs[bug_index]
         if bug.age > MAX_AGE or bug.energy <= 0 then
@@ -296,13 +290,17 @@ local function iterate()
             end
         end
     end
-    --Remove all dead bugs
-    for _ = 1, #dead_indexes do
-        local current_index = dead_indexes[1]
-        local dead_bug = bugs[current_index]
-        field[dead_bug.position.x][dead_bug.position.y] = CODES.EMPTY
-        table.remove(bugs, current_index)
-    end
+    --Create new population excluding dead bugs
+    local new_bugs = {}
+    for bug_index = 1, #bugs do
+		if not does_contain(dead_indexes, bug_index) then
+			table.insert(new_bugs, bugs[bug_index])
+		else
+			local dead_bug = bugs[bug_index]
+			field[dead_bug.position.x][dead_bug.position.y] = CODES.EMPTY
+		end
+	end
+    bugs = new_bugs
     --End simulation if population dies
     if #bugs == 0 then
         return nil
@@ -314,14 +312,13 @@ local function iterate()
         replenish_timer = 0
     end
     iteration = iteration + 1
-    --Sample the population
-    if iteration % SAMPLE_INTERVAL == 0 then
-        bugs[math.random(1, #bugs)]:info()
-    end
-    return {field=field, iteration=iteration, population=#bugs}
+    return {field=field,
+			bugs=bugs,
+			iteration=iteration,
+			population=#bugs}
 end
 
---Information necessary for visual representation
+--Variables and functions necessary for simulation control
 return {FIELD_X=FIELD_X,
         FIELD_Y=FIELD_Y,
         CODES=CODES,
