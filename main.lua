@@ -16,7 +16,7 @@ local function rgb(r, g, b)
     return {r=r, g=g, b=b}
 end
 
-local WINDOW_TITLE = "Bugevo"
+local WINDOW_TITLE = "BugEvo"
 local RUN_PROMPT = "Press [SPACE] to begin a new simulation"
 local WORD_WRAP = 500
 
@@ -61,7 +61,7 @@ local function active()
     else
         local field = data.field
         local iteration = data.iteration
-	local population = data.population
+		local population = data.population
         for x = 1, #field do
             for y = 1, #field[x] do
                 if field[x][y] ~= CODES.EMPTY then
@@ -72,7 +72,7 @@ local function active()
                     end
                     --[[Adjustments are made here to transition between "simulation" and "LOVE2D" space.
                         1. LOVE2D coordinates begin counting from 0; the simulation counts from 1
-                        2. LOVE2D draws in the foruth quadrant of the cartesian plane; the simulation uses the first]]--
+                        2. LOVE2D draws in the foruth quadrant of the cartesian plane; the simulation uses the first]]
                     love.graphics.rectangle("fill", X_STRETCH * x - X_STRETCH, (FIELD_Y - y) * Y_STRETCH, X_STRETCH, Y_STRETCH)
                 end
             end
