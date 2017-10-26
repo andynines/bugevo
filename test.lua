@@ -16,9 +16,9 @@ local function test()
 	initialize()
 	print("Simulation will cease after ".. MAX_ITERATIONS.. " iterations\n")
 	for _ = 1, MAX_ITERATIONS do
-		local data = iterate()
+	    local data = iterate()
 	    if not data then
-			--Simulation returning nil means population has died
+		    --Simulation returning nil means population has died
 	        print("The bugs went extinct")
 	        break
 	    elseif data.iteration % SAMPLE_INTERVAL == 0 then
