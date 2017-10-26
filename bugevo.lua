@@ -168,9 +168,9 @@ end
 function Bug:info()
     --Return a string of the bug's attributes
     local info = "generation ".. self.generation.. "\n"..
-				 "age ".. self.age.. "\n"..
-				 "energy ".. self.energy.. "\n"..
-				 "location (".. self.position.x.. ", ".. self.position.y.. ")\n"
+                 "age ".. self.age.. "\n"..
+                 "energy ".. self.energy.. "\n"..
+                 "location (".. self.position.x.. ", ".. self.position.y.. ")\n"
     for probability_index, probability in pairs(self.genes) do
         local current_delta = MOVE_DELTAS[probability_index]
         info = info.. "gene (".. current_delta.x.. ", ".. current_delta.y.. ") ".. probability.. "/".. DIRECTION_MAX_PROBABILITY.. "\n"
@@ -293,13 +293,13 @@ local function iterate()
     --Create new population excluding dead bugs
     local new_bugs = {}
     for bug_index = 1, #bugs do
-		if not does_contain(dead_indexes, bug_index) then
-			table.insert(new_bugs, bugs[bug_index])
-		else
-			local dead_bug = bugs[bug_index]
-			field[dead_bug.position.x][dead_bug.position.y] = CODES.EMPTY
-		end
-	end
+        if not does_contain(dead_indexes, bug_index) then
+            table.insert(new_bugs, bugs[bug_index])
+        else
+            local dead_bug = bugs[bug_index]
+            field[dead_bug.position.x][dead_bug.position.y] = CODES.EMPTY
+        end
+    end
     bugs = new_bugs
     --End simulation if population dies
     if #bugs == 0 then
@@ -313,9 +313,9 @@ local function iterate()
     end
     iteration = iteration + 1
     return {field=field,
-			bugs=bugs,
-			iteration=iteration,
-			population=#bugs}
+            bugs=bugs,
+            iteration=iteration,
+            population=#bugs}
 end
 
 --Variables and functions necessary for simulation control
