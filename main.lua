@@ -61,7 +61,7 @@ local function active()
     else
         local field = data.field
         local iteration = data.iteration
-	local population = data.population
+        local population = data.population
         for x = 1, #field do
             for y = 1, #field[x] do
                 if field[x][y] ~= CODES.EMPTY then

@@ -215,14 +215,11 @@ function Bug:wander()
     self.position = new_position
     --Bacteria consumption
     if field[self.position.x][self.position.y] == CODES.BACTERIA then
-        self.energy = self.energy + EAT_ENERGY_GAIN
-        if self.energy > MAX_ENERGY then
-            self.energy = MAX_ENERGY
-        end
+        self.energy = math.min(MAX_ENERGY, self.energy + EAT_ENERGY_GAIN)
         bacteria_count = bacteria_count - 1
     end
     field[self.position.x][self.position.y] = CODES.BUG
-    --The bug ages
+    --The bug tires
     self.age = self.age + 1
     self.energy = self.energy - MOVE_ENERGY_CONSUMPTION
     return true
