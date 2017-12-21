@@ -36,15 +36,14 @@ local function xy(x, y)
 end
 
 local RIGID_BORDERS = false --If false, bugs can cross edges and will appear on the opposite side
-local MOVEMENT_DISTANCE = 1 --How many spaces a bug can move in one iteration
-local MOVE_DELTAS = {xy(0, MOVEMENT_DISTANCE), --Coordinate pair addends for every direction of movement
-                     xy(0, -MOVEMENT_DISTANCE),
-                     xy(MOVEMENT_DISTANCE, 0),
-                     xy(-MOVEMENT_DISTANCE, 0),
-                     xy(MOVEMENT_DISTANCE, MOVEMENT_DISTANCE),
-                     xy(MOVEMENT_DISTANCE, -MOVEMENT_DISTANCE),
-                     xy(-MOVEMENT_DISTANCE, MOVEMENT_DISTANCE),
-                     xy(-MOVEMENT_DISTANCE, -MOVEMENT_DISTANCE)}
+local MOVE_DELTAS = {xy(0, 1), --Coordinate pair addends for every direction of movement
+                     xy(0, -1),
+                     xy(1, 0),
+                     xy(-1, 0),
+                     xy(1, 1),
+                     xy(1, -1),
+                     xy(-1, 1),
+                     xy(-1, -1)}
 
 math.randomseed(os.time())
 
