@@ -23,7 +23,7 @@ The project was developed using Lua 5.3.4 and LOVE2D 0.8.0.
 * bugevo.lua: the simulation code
 * license.txt: a copy of the MIT License
 * main.lua: graphical representation of the simulation using LOVE2D
-* readme.txt: this readme
+* readme.md: this readme
 * test.lua: text-only simulation
 ## Use
 To run the simulation with its LOVE2D graphical presentation, move to the
