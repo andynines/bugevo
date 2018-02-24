@@ -1,4 +1,4 @@
-# Bugevo
+# BugEvo
 BugEvo is a simulation using Lua and LOVE2D wherein bugs learn to hunt bacteria;
 its idea was proposed by A.K. Dewdney in Scientific American Magazine.
 
